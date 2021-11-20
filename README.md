@@ -1,2 +1,2 @@
 # Spellbook-Scripts
-A collection of scripts meant to make a personal knowledge base out of any plain text file
+A collection of scripts meant to make a personal knowledge base out of any plain text file. These scripts are meant to auto-link files, generate back links, and sync publicly tagged files with a digital garden. The resulting PKB will eventually be integrated with Athena, and the Sapphire Framework

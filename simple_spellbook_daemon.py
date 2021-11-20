@@ -58,10 +58,10 @@ def crawl_spellbook(directory):
         else:
             print("checking path", absolute)
             crawl_spellbook(absolute+"/")
-           
+
 def check_file(path):
-    if(path.endswith("org") or
-       path.endswith("md")):
+    if (path.endswith("org") or
+            path.endswith("md")):
         check_for_links(path)
         check_for_tags(path)
 

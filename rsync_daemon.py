@@ -1,12 +1,15 @@
 import subprocess, re, os
 
-command = ["rsync"]
+# This won't full work without a password, and I will need to salt and hash the passwd
 
+upload_files = [""]
+root_directory = ""
 hub_directory = ""
-host = "192.168.0.1"
+host = "127.0.0.1"
+host_directory = "/var/www/html/"
 
 def config():
-  global root_directory, hub_directory, backlink_directory, ignored
+  global root_directory, hub_directory, host
 
   conf = os.path.expanduser("./.spellbook")
   file = ""
@@ -20,36 +23,31 @@ def config():
       root_directory = info[1]
     if (info[0] == "hub"):
       hub_directory = info[1]
-    if (info[0] == "backlink"):
-      backlink_directory = info[1]
+    if (info[0] == "host"):
+      host = info[1]
+  print(host)
   file.close()
-  # Update the directories to NOT crawl
-  ignored = [root_directory + hub_directory, root_directory + backlink_directory]
 
 def call_simple_spellbook_daemon():
   print("JK I don't want to integrate it that much yet")
 
 def scan_public_hub():
+  global upload_files
+
   temp_var = "tag-hub-public"
   file = open(temp_var,'r')
   for line in file:
-
-
-# This maybe should be its own daemon
-def make_website_hubs():
-
-
-# This maybe should be its own daemon
-def make_website_backlinks():
+    filepath = line.strip("[[").strip("]]").strip("\n")
+    upload_files.append(filepath)
 
 if __name__ == "__main__":
-  tag_hub = open("garden-hub.org")
-  # This should read from a config file
+  config()
+  scan_public_hub()
 
-  for index,line in enumerate(tag_hub):
-    if(index == 0):
-      command.add(host+":"+line)
-    else:
-      command.add(":"+line)
+  command = ["rsync"]
 
+  for filepath in upload_files:
+      command.append(filepath+" ")
+
+  command.append(["chris@" + host + ":" + host_directory])
   subprocess.run(command)
