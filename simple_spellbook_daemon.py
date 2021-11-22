@@ -97,6 +97,7 @@ def check_for_links(path):
     file.close()
 
 # I need to find better names for these things. The need to be UIDs
+# I am just going to append-the-path to make them unique, since it's not supposed to be human manipulated anwyay
 def backlink(path,backlink_file):
     global root_directory, backlink_directory
     backlink_path = root_directory+backlink_directory+backlink_file

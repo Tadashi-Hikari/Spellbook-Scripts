@@ -1,12 +1,18 @@
 import re, os
 
+# The command daemon crawls spellbook for commands, and executes them
+# It will expand commands /w Alias. How to have them talk w/o Athena?
+import subprocess
+
 root_directory = ""
 hub_directory = ""
 backlink_directory = ""
+alias_key = ""
 ignored = [""]
+daemons_directory = ""
 
 def config():
-    global root_directory, hub_directory, backlink_directory, ignored
+    global root_directory, hub_directory, backlink_directory, alias_key, ignored, daemons_directory
 
     conf = os.path.expanduser("./.spellbook")
     file = ""
@@ -25,16 +31,21 @@ def config():
         elif (info[0] == "commands"):
             # I need to make a global for this
             command_file = info[1]
+        elif(info[0] == "daemons"):
+            daemons_directory = info[1]
+        elif(info[0] == "alias"):
+            alias_key = info[1]
     file.close()
     # Update the directories to NOT crawl
     ignored = [root_directory + hub_directory, root_directory + backlink_directory]
 
+# this is the spells (commands) file
 def read_commands(commands_file):
     file = open(commands_file,"a+")
     for line in file:
         split = line.split("=")
         # straight forward syntax
-        alias = {"":""}
+        alias = {}
         alias[split[0]] = split[1]
 
 def crawl_spellbook(directory):
@@ -67,8 +78,10 @@ def check_file(path):
             path.endswith("md")):
         check_for_commands(path)
 
+# I'm sticking w/ a simple -+- and alias & syntax
 def check_for_commands(path):
     command_regex = "-\w+(-{1}|(\+\w+\+*)+-{1})"
+    lines = [""]
 
     file = open(path,"r")
 
@@ -78,10 +91,30 @@ def check_for_commands(path):
     for line in file:
         match_object = regex.search(line)
         if (match_object == None):
-            return 0
+            lines.append(line)
+            continue
         else:
-            # This is just to see if it works, for now
+            # When a command is found, break that biddy up, remove it from the file, and check for aliases
             print("command found")
             print(match_object.group())
             # I need to extract and run the command, that way it's no longer in the note
-            return 1
+            command = match_object.group().strip("-").split("+")
+            lines.append(line[0:match_object.start()]+line[match_object.end():len(line)-1])
+            print(command)
+            temp = ""
+            for thing in command:
+                temp+=" "+thing
+            # This is just a lazy way of seeing how well they play together
+            com = ["python3",daemons_directory+"alias_daemon.py","\'"+temp.strip()+"\'"]
+            temp2 = subprocess.run(com)
+            print(temp2.stdout)
+            #subcommand.run(command)
+    file.close()
+    file = open(path,'w')
+    for line in lines:
+        file.write(line)
+    file.close()
+
+if __name__ == "__main__":
+    config()
+    crawl_spellbook(root_directory)
