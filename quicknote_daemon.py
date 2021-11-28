@@ -1,11 +1,13 @@
 # When exactly should I call this file?
 # I suppose it doesn't matter if I make a million of them
 
+# This was designed to work w/ Markor, though I suppose it will work fine for other things
+
 import os, datetime
 
 # update quicknote_hub
 def manage_quicknote_hub():
-    print
+    print("Something")
 
 # This just simply renames the file
 if __name__ == '__main__':

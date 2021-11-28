@@ -12,7 +12,12 @@ tag_prefix = "tag-hub-"
 backlink_prefix = "backlink-"
 # I don't think this will update with the variables. I need to be mindful of this
 ignored = [""]
+v = False
 
+def verbose(string):
+    global v
+    if v == True:
+        print(string)
 
 def config():
     global root_directory, hub_directory, backlink_directory, ignored
@@ -47,16 +52,16 @@ def crawl_spellbook(directory):
         #ignore those directories
         for item in ignored:
             if (absolute.find(item) != -1):
-                print("ignoring directory")
+                verbose("ignoring directory")
                 ignore = True
 
         if(ignore == True):
             continue
         elif(os.path.isfile(absolute)):
-            print("checking path", absolute)
+            verbose("checking path "+absolute)
             check_file(absolute)
         else:
-            print("checking path", absolute)
+            verbose("checking path "+absolute)
             crawl_spellbook(absolute+"/")
 
 def check_file(path):
@@ -78,20 +83,20 @@ def check_for_links(path):
     subregex = re.compile(filename)
     file = open(path, 'r+')
 
-    print("checking", path, "for links")
+    verbose("checking "+path+"for links")
 
     for line in file:
         match_object = regex.search(line)
-        print("checking line:", line)
+        verbose("checking line: "+ line)
         if (match_object == None):
-            print("No link was found")
+            verbose("No link was found")
             continue
         else:
-            print("A link was found:", match_object.group())
+            verbose("A link was found: "+match_object.group())
             match_sub = re.compile(subregex)
             thing = match_sub.search(match_object.group())
             linked_file = thing.group().strip("[").strip("]")
-            print("The sublink is:", linked_file.removeprefix("./"))
+            verbose("The sublink is:"+linked_file.removeprefix("./"))
             backlink_file = backlink_prefix + linked_file.removeprefix("./")
             backlink(path, backlink_file)
     file.close()
@@ -128,16 +133,16 @@ def check_for_tags(path):
 
     file = open(path, 'r')
 
-    print("checking", path, " for tags")
+    verbose("checking "+path+" for tags")
 
     for line in file:
-        print("checking line:", line)
+        verbose("checking line: "+ line)
         match_object = regex.search(line)
         if (match_object == None):
-            print("No tag was found")
+            verbose("No tag was found")
             continue
         else:
-            print("A tag was found:", match_object.group())
+            verbose("A tag was found: "+match_object.group())
             for tag in match_object.group().split(":"):
                 if (tag != ""):
                     check_tag_hub(tag)
@@ -182,3 +187,7 @@ if __name__ == '__main__':
 
     config()
     crawl_spellbook(root_directory)
+    # Run the command daemon. I'll touch these all up later
+    command = ["python","command_daemon.py"]
+    ##command = [python,"git_daemon.py"]
+    ##command = ["python","quicknote_daemon.py"]
