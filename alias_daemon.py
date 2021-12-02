@@ -60,11 +60,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="an alias function for writing spells")
     parser.add_argument('default',metavar='a')
+    # What's special about this?
     parser.add_argument('-c',dest="command",action="store_true")
     args = parser.parse_args()
 
     #print("Running alias daemon. Input is:",args.default)
 
+    # I think it's a different syntax
     if(args.command == True):
         print(command_check(args.default.strip("\'")))
     else:
