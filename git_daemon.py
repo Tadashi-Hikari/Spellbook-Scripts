@@ -7,4 +7,3 @@ if __name__ == "__main__":
 
     time = datetime.datetime.now().strftime("%Y%m%d%:%H%M%S")
     command = ["git","commit","-m","autoupdated by spellbook on "+time]
-    subprocess.run(command)

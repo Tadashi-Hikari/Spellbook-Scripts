@@ -14,12 +14,6 @@ backlink_prefix = "backlink-"
 ignored = [""]
 v = False
 
-def sort_by_tag():
-  # read config
-  # if tag, move to location 
-  # link
-  # how to handle conflicts? 
-
 def verbose(string):
     global v
     if v == True:
@@ -194,8 +188,6 @@ if __name__ == '__main__':
     config()
     crawl_spellbook(root_directory)
     # Run the command daemon. I'll touch these all up later
-    command = ["python","git_daemon.py"]
-    subprocess.run(command)
     command = ["python","command_daemon.py"]
-    subprocess.run(command)
+    ##command = [python,"git_daemon.py"]
     ##command = ["python","quicknote_daemon.py"]

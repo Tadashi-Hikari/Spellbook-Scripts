@@ -111,17 +111,17 @@ def check_for_commands(path):
             print(match_object.group())
             # I need to extract and run the command, that way it's no longer in the note
             command = match_object.group().strip("-").split("+")
-            lines.append(line[0:match_object.start()] + line[match_object.end():len(line) - 1])
+            lines.append(line[0:match_object.start()]+line[match_object.end():len(line)-1])
             print(command)
             temp = ""
             for token in command:
                 com = ["python3", daemons_directory + "alias_daemon.py", "-c", "\'" + token.strip() + "\'"]
-                process = subprocess.Popen(com, stdout=subprocess.PIPE)
+                process = subprocess.Popen(com,stdout=subprocess.PIPE)
                 out = process.communicate()[0].decode("utf-8")
                 print("Alias returned:", out, end="")
-                temp += " " + out.strip()
-            print("Full command:", temp)
-            # subcommand.run(command)
+                temp += " "+out.strip()
+            print("Full command:",temp)
+            #subcommand.run(command)
 
     file.close()
     file = open(path,'w')
